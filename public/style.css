@@ -1,0 +1,54 @@
+.modal1{
+  top:200px;
+}
+
+.modal-button-container{
+  margin-bottom:15px;
+}
+
+.modal-data-container0{
+  padding:5px 50px 5px 5px;
+  display:flex;
+  flex-direction: column;
+  margin-bottom:15px;
+}
+
+.modal-data-container0 div{
+  display:flex;
+  align-items: baseline;
+}
+.modal-data-container0 h6{
+  margin:0;
+}
+.modal-data-container0 p{
+  margin:0;
+}
+
+.modal-data-container1{
+  padding:5px 50px 5px 5px;
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.modal-data-container1 > div p{
+  margin:0;
+}
+
+.modal-data-container1 > div h5{
+  margin:0;
+}
+
+.modal2{
+  top:250px;
+}
+
+.modal2-container{
+  display:flex;
+  flex-direction:column;
+  align-items: center;
+}
+
+.modal2-button-container{
+  margin:10px 0 0 0;
+}
