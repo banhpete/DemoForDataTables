@@ -1,3 +1,7 @@
+tbody{
+  cursor: pointer;
+}
+
 .modal{
   overflow:visible;
 }
@@ -11,7 +15,7 @@
 }
 
 .modal-data-container0{
-  padding:5px 50px 5px 5px;
+  padding:5px 30px 5px 5px;
   display:flex;
   flex-direction: column;
   margin-bottom:15px;
@@ -33,6 +37,7 @@
   display:flex;
   flex-direction: row;
   justify-content: space-between;
+  margin-bottom:15px;
 }
 
 .modal-data-container1 > div p{
@@ -40,6 +45,21 @@
 }
 
 .modal-data-container1 > div h5{
+  margin:0;
+}
+
+.modal-data-container2{
+  padding:5px 50px 5px 5px;
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.modal-data-container2 > div p{
+  margin:0;
+}
+
+.modal-data-container2 > div h6{
   margin:0;
 }
 
@@ -57,12 +77,25 @@
   margin:10px 0 0 0;
 }
 
-.modal2-background{
-  position:absolute;
-  background:rgba(0,0,0,0.5);
-  top:-300px;
-  width:100vw;
-  height:100vh;
+.modal3{
+  top:200px;
+}
+
+.modal3 .modal-data-container0 div{
+  margin-bottom:5px;
+  width:65%;
+}
+
+.modal3 .modal-data-container0 h6{
+  margin-right:10px;
+}
+
+.modal3 .modal-data-container1 div div{
+  margin-top:3px;
+}
+
+.modal3 .modal-data-container2 div{
+  width:60%;
 }
 
 footer{

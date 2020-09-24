@@ -1,4 +1,4 @@
-// Table Data
+// Table Data ------------------------------------------------------------------------------------------------------------------------------
 var invoiceData = [
   { id: 1, name: 'Oswald Chisman', order_date: '1/20/2020', ship_date: '9/18/2020', ordered: 77, filled: 70, total_pending: 39.03, payments: 30.46, notes: "", billing_address: "123 Fake Street", shipping_address: "321 Fake Avenue" },
   { id: 2, name: 'Gizela Heskin', order_date: '5/26/2020', ship_date: '10/17/2019', ordered: 2, filled: 41, total_pending: 86.55, payments: 70.32, notes: "", billing_address: "123 Fake Street", shipping_address: "321 Fake Avenue" },
@@ -25,12 +25,14 @@ var invoiceData = [
   { id: 23, name: 'Hannah Oylett', order_date: '7/25/2020', ship_date: '3/16/2020', ordered: 8, filled: 35, total_pending: 75.84, payments: 20.87, notes: "", billing_address: "123 Fake Street", shipping_address: "321 Fake Avenue" },
 ]
 
-// DOM Elements
+// DOM Elements ------------------------------------------------------------------------------------------------------------------------------
+// Table
 var body = $('body')
 var domTable = $('#invoice_table')
 var domTableBody = $('#invoice_table tbody')
 var dataTable = domTable.DataTable();
 
+// Data Modal
 var modal = $('#modal1')
 var modalSaveBtn = $('#modal-save')
 var modalDelBtn = $('#modal-delete')
@@ -38,15 +40,23 @@ var modalEditBtn = $('#modal-edit')
 var modalCloseBtn = $('#modal-closeBtn')
 var modalClose = $('#modal-close')
 
+// Confirmation Modal
 var modalConfirmation = $('#modal2')
 var modalConfirmationYes = $('#modal2-yes')
 var modalConfirmationNo = $('#modal2-no')
 
-// Selected Data
+// Edit Modal
+var modalEdit = $('#modal3')
+var modalEditSaveBtn = $('#modal3-save')
+var modalEditCloseBtn = $('#modal3-closeBtn')
+var modalEditClose = $('#modal3-close')
+
+// App State ------------------------------------------------------------------------------------------------------------------------------
 var selectedData = null;
 
-// Event Handlers for Table
+// Event Handlers for Table ---------------------------------------------------------------------------------------------------------------
 domTableBody.on('click', 'tr', function (e) {
+
   if ($(this).hasClass('selected')) {
     $(this).removeClass('selected');
   }
@@ -55,10 +65,9 @@ domTableBody.on('click', 'tr', function (e) {
     $(this).addClass('selected');
   }
 
-  e.stopPropagation();
-  selectedData = findDataById(dataTable.row(this).data()[0], invoiceData)
+  selectedData = findDataById(dataTable.row(this).data()[0])
 
-  // Modify Modal
+  // Modify Modal based on data 
   modal.find('.modal-title').text(`Invoice ${selectedData.id}`)
   modal.find('#modal-name').text(`${selectedData.name}`)
   modal.find('#modal-address').text(`${selectedData.billing_address}`)
@@ -66,48 +75,176 @@ domTableBody.on('click', 'tr', function (e) {
   modal.find('#modal-shippingAddress').text(`${selectedData.shipping_address}`)
   modal.find('#modal-shipDate').text(`${selectedData.ship_date}`)
   modal.find('#modal-orderDate').text(`${selectedData.order_date}`)
-  modal.css('display', 'block')
+  modal.find('#modal-ordered').text(`${selectedData.ordered}`)
+  modal.find('#modal-filled').text(`${selectedData.filled}`)
+  modal.find('#modal-total').text(`$${selectedData.total_pending}`)
+  modal.find('#modal-payment').text(`$${selectedData.payments}`)
+  modal.modal('show')
 })
 
-// Event Handler for Modal 1 - Table Data
+// Event Handler for Modal 1 - Table Data ---------------------------------------------------------------------------------------
 modalDelBtn.on('click', function (e) {
   invoiceData = invoiceData.filter((row) => row.id !== selectedData.id)
-  modalConfirmation.css('display', 'block');
+  modalConfirmation.find('#modal2-conf-msg').text(`Are you sure you want to delete invoice ${selectedData.id}`)
+  modal.modal('hide')
+  modalConfirmation.modal('show');
+})
+
+modalEditBtn.on('click', function (e) {
+  modal.modal('hide')
+
+  // Modify ModalEdit based on data
+  modalEdit.find('.modal-title').val(`Invoice ${selectedData.id}`)
+  modalEdit.find('#modal3-name').val(`${selectedData.name}`)
+  modalEdit.find('#modal3-address').val(`${selectedData.billing_address}`)
+  modalEdit.find('#modal3-shippingName').val(`${selectedData.name}`)
+  modalEdit.find('#modal3-shippingAddress').val(`${selectedData.shipping_address}`)
+  modalEdit.find('#modal3-shipDate').val(`${selectedData.ship_date}`)
+  modalEdit.find('#modal3-orderDate').val(`${selectedData.order_date}`)
+  modalEdit.find('#modal3-ordered').val(`${selectedData.ordered}`)
+  modalEdit.find('#modal3-filled').val(`${selectedData.filled}`)
+  modalEdit.find('#modal3-total').val(`$${selectedData.total_pending}`)
+  modalEdit.find('#modal3-payment').val(`$${selectedData.payments}`)
+  modalEdit.modal('show')
+  modalEdit.find('.modal-title').text(`Edit Invoice ${selectedData.id}`)
 })
 
 modalCloseBtn.on('click', function (e) {
-  modal.css('display', 'none')
+  modal.modal('hide')
 })
 
 modalClose.on('click', function (e) {
-  modal.css('display', 'none')
+  modal.modal('hide')
 })
 
-// Event Handler for Modal 2 - Confirmation
+// Event Handler for Modal 2 - Confirmation ---------------------------------------------------------------------------------------
 modalConfirmationYes.on('click', function (e) {
-  dataTable.row('.selected').remove().draw(false);
-  modal.css('display', 'none')
-  modalConfirmation.css('display', 'none')
+  if (modalEditSaveBtn.attr('disabled') === "disabled") {
+    dataTable.row('.selected').remove().draw(false);
+    modalConfirmation.modal('hide')
+  } else {
+    modalConfirmation.modal('hide')
+    console.log('clicked Yes')
+    modalEditSaveBtn.attr("disabled", true)
+  }
 })
 
 modalConfirmationNo.on('click', function (e) {
-  modalConfirmation.css('display', 'none')
+  if (modalEditSaveBtn.attr('disabled') === "disabled") {
+    modalConfirmation.modal('hide')
+    modal.modal('show')
+  } else {
+    modalConfirmation.modal('hide')
+    modalEdit.modal('show')
+  }
 })
 
-// Populate Table
+// Event Handler for Modal 3 - Editting ---------------------------------------------------------------------------------------
+modalEdit.on('keydown', function (e) {
+  if (e.key !== "Escape") {
+    modalEditSaveBtn.attr("disabled", false)
+  }
+})
+
+modalEditClose.on('click', function (e) {
+  if (modalEditSaveBtn.attr('disabled') === 'disabled') {
+    modalEdit.modal('hide')
+    modal.modal('show')
+    modalEditSaveBtn.attr("disabled", true)
+  } else {
+    modalConfirmation.find('#modal2-conf-msg').text(`Changes for Invoice ${selectedData.id} was not saved - Discard Changes?`)
+    modalConfirmation.modal('show');
+    modalEdit.modal('hide')
+  }
+})
+
+modalEditCloseBtn.on('click', function (e) {
+  if (modalEditSaveBtn.attr('disabled') === 'disabled') {
+    modalEdit.modal('hide')
+    modal.modal('show')
+    modalEditSaveBtn.attr("disabled", true)
+  } else {
+    modalConfirmation.find('#modal2-conf-msg').text(`Changes for Invoice ${selectedData.id} was not saved - Discard Changes?`)
+    modalConfirmation.modal('show');
+    modalEdit.modal('hide')
+  }
+})
+
+modalEditSaveBtn.on('click', function (e) {
+  let name = modalEdit.find('#modal3-name').val()
+  let orderDate = modalEdit.find('#modal3-orderDate').val()
+  let shipDate = modalEdit.find('#modal3-shipDate').val()
+  let ordered = modalEdit.find('#modal3-ordered').val()
+  let filled = modalEdit.find('#modal3-filled').val()
+  let total = modalEdit.find('#modal3-total').val()
+  let payment = modalEdit.find('#modal3-payment').val()
+  let shippingAddress = modalEdit.find('#modal3-shippingAddress').val()
+  let billingAdress = modalEdit.find('#modal3-address').val()
+
+  selectedData = {
+    ...selectedData,
+    name,
+    order_date: orderDate,
+    ship_date: shipDate,
+    ordered,
+    filled,
+    total_pending: total,
+    payments: payment,
+    billing_address: billingAdress,
+    shipping_address: shippingAddress
+  }
+
+  console.log(selectedData)
+
+  updateDataById(selectedData.id, selectedData)
+
+  dataTable.row('.selected').data([
+    selectedData.id,
+    selectedData.name,
+    selectedData.order_date,
+    selectedData.ship_date,
+    selectedData.ordered,
+    selectedData.filled,
+    selectedData.total_pending,
+    selectedData.payments
+  ])
+
+  modal.find('.modal-title').text(`Invoice ${selectedData.id}`)
+  modal.find('#modal-name').text(`${selectedData.name}`)
+  modal.find('#modal-address').text(`${selectedData.billing_address}`)
+  modal.find('#modal-shippingName').text(`${selectedData.name}`)
+  modal.find('#modal-shippingAddress').text(`${selectedData.shipping_address}`)
+  modal.find('#modal-shipDate').text(`${selectedData.ship_date}`)
+  modal.find('#modal-orderDate').text(`${selectedData.order_date}`)
+  modal.find('#modal-ordered').text(`${selectedData.ordered}`)
+  modal.find('#modal-filled').text(`${selectedData.filled}`)
+  modal.find('#modal-total').text(`$${selectedData.total_pending}`)
+  modal.find('#modal-payment').text(`$${selectedData.payments}`)
+
+  modal.modal('show')
+  modalEdit.modal('hide')
+  modalEditSaveBtn.attr("disabled", true)
+
+})
+
+// Populate Table ------------------------------------------------------------------------------------------------------------------------------
 function populatetable(table, data) {
   data.forEach((row) => {
     table.row.add([row.id, row.name, row.order_date, row.ship_date, row.ordered, row.filled, row.total_pending, row.payments]).draw(false)
   })
 }
 
-// Function to find data
-function findDataById(id, data) {
-  // Assuming row/index is aligned. Otherwise more complex algorithim must be written
-  return data[id - 1]
-}
-
-// Load Data
+// Load Data ------------------------------------------------------------------------------------------------------------------------------
 $(document).ready(function () {
   populatetable(dataTable, invoiceData);
 });
+
+// Functions to interact with inovice data ------------------------------------------------------------------------------------------------------------------------------
+function findDataById(id) {
+  // Assuming row/index is aligned. Otherwise more complex algorithim must be written
+  return invoiceData[id - 1]
+}
+
+function updateDataById(id, newRow) {
+  invoiceData[id - 1] = newRow
+}
