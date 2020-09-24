@@ -57,13 +57,10 @@ var selectedData = null;
 // Event Handlers for Table ---------------------------------------------------------------------------------------------------------------
 domTableBody.on('click', 'tr', function (e) {
 
-  if ($(this).hasClass('selected')) {
-    $(this).removeClass('selected');
-  }
-  else {
-    dataTable.$('tr.selected').removeClass('selected');
-    $(this).addClass('selected');
-  }
+
+  dataTable.$('tr.selected').removeClass('selected');
+  $(this).addClass('selected');
+
 
   selectedData = findDataById(dataTable.row(this).data()[0])
 
@@ -124,7 +121,6 @@ modalConfirmationYes.on('click', function (e) {
     modalConfirmation.modal('hide')
   } else {
     modalConfirmation.modal('hide')
-    console.log('clicked Yes')
     modalEditSaveBtn.attr("disabled", true)
   }
 })
@@ -194,8 +190,6 @@ modalEditSaveBtn.on('click', function (e) {
     shipping_address: shippingAddress
   }
 
-  console.log(selectedData)
-
   updateDataById(selectedData.id, selectedData)
 
   dataTable.row('.selected').data([
@@ -207,7 +201,7 @@ modalEditSaveBtn.on('click', function (e) {
     selectedData.filled,
     selectedData.total_pending,
     selectedData.payments
-  ])
+  ]).draw(false)
 
   modal.find('.modal-title').text(`Invoice ${selectedData.id}`)
   modal.find('#modal-name').text(`${selectedData.name}`)
